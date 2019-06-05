@@ -1,4 +1,5 @@
 #!/bin/sh
+#Daniel McGuinness 2019
 
 ME="Daniel J McGuinness" #Set this to the file attributor
 FFLAG=0
@@ -6,16 +7,16 @@ DIRFLAG=0
 
 display_help(){
   echo "NAME"
-  echo "\tcinit - Initializes a C repository with default files."
+  echo "  cinit - Initializes a C repository with default files."
   echo ""
   echo "SYNOPSIS"
-  echo "\tcinit [OPTIONS]... DIRECTORY"
+  echo "  cinit [OPTIONS]... DIRECTORY"
   echo ""
   echo "DESCRIPTION"
-  echo "\tCreates DIR.c DIR.h and DIR_test.c files along with a Makefile."
+  echo "  Creates DIR.c DIR.h and DIR_test.c files along with a Makefile."
   echo ""
-  echo "\t-f        -- overwrites directory if it already exists."
-  echo "\t-u STRING -- overwrites default user copyright stamp with STRING."
+  echo "  -f        -- overwrites directory if it already exists."
+  echo "  -u STRING -- overwrites default user copyright stamp with STRING."
 }
 
 #Process command line options
@@ -41,7 +42,7 @@ if [ -d "$1" ]; then
   if [ "$FFLAG" -eq 0 ]; then
     DIRFLAG=1
   else
-    rm -rf $PWD/$1
+    rm -rf "${PWD:?}"/"$1"
   fi
 fi
 
@@ -49,9 +50,9 @@ fi
 if [ "$DIRFLAG" -eq 1 ]; then
   echo "Directory already exists"
 else
-  mkdir $PWD/$1
-  echo "/* $ME `date +%Y` */\n\n#include \"$1.h\"" >> $PWD/$1/$1.c
-  echo "/* $ME `date +%Y` */" >> $PWD/$1/$1.h
-  echo "/* $ME `date +%Y` */\n\n#include \"$1.h\"\n\nint main(){\n\treturn 0;\n}" >> $PWD/$1/$1_test.c
-  echo "all:\n\tgcc $1_test.c $1.c\n\nclean:\n\trm -f ./a.out">> $PWD/$1/Makefile
+  mkdir "$PWD"/"$1"
+  printf "/* %s $(date +%Y) */\n\n#include \"%s.h\"" "$ME" "$1" >> "$PWD"/"$1"/"$1".c
+  printf "/* %s $(date +%Y) */" "$ME" >> "$PWD"/"$1"/"$1".h
+  printf "/* %s $(date +%Y) */\n\n#include \"%s.h\"\n\nint main(){\n\treturn 0;\n}" "$ME" "$1" >> "$PWD"/"$1"/"$1"_test.c
+  printf "all:\n\tgcc %s_test.c %s.c\n\nclean:\n\trm -f ./a.out" "$1" "$1"  >> "$PWD"/"$1"/Makefile
 fi
